@@ -1,8 +1,11 @@
 #include <application.h>
 
-#define RADIO_DELAY 10000
+#define RADIO_DELAY (5000)
 
 #define BATTERY_UPDATE_INTERVAL (60 * 60 * 1000)
+
+
+#define APPLICATION_TASK_ID 0
 
 
 // LED instance
@@ -17,11 +20,9 @@ bc_lis2dh12_result_g_t result;
 
 bc_lis2dh12_alarm_t alarm;
 
+bc_tick_t radio_delay = 0;
 
-bc_tick_t startSeconds = 0;
-bc_tick_t endSeconds = 0;
-
-bool playing = false;
+bool washing = false;
 
 void lis2_event_handler(bc_lis2dh12_t *self, bc_lis2dh12_event_t event, void *event_param)
 {
@@ -31,28 +32,17 @@ void lis2_event_handler(bc_lis2dh12_t *self, bc_lis2dh12_event_t event, void *ev
     {
         bc_lis2dh12_get_result_g(&acc, &result);
     }
-    else if (event == BC_LIS2DH12_EVENT_ALARM && playing)
+    else if (event == BC_LIS2DH12_EVENT_ALARM && washing)
     {
-        endSeconds = bc_tick_get();
-        playing = false;
-        static bc_tick_t radio_delay = 0;
-        bc_led_set_mode(&led, BC_LED_MODE_OFF);
-        if (bc_tick_get() >= radio_delay)
-        {
-            // Make longer pulse when transmitting
-            bc_led_pulse(&led, 100);
+        // Make longer pulse when transmitting
+        bc_led_pulse(&led, 100);
 
-            holdTime = ((endSeconds - startSeconds) / (float)1000);
-
-            bc_radio_pub_float("hold-time", &holdTime);
-
-            radio_delay = bc_tick_get() + RADIO_DELAY;
-
-        }
+        radio_delay = bc_tick_get() + RADIO_DELAY;
+        bc_log_debug("updating");
     }
     else
     {
-        bc_log_debug("Not playing");
+        bc_log_debug("not washing");
     }
 }
 
@@ -60,8 +50,8 @@ void button_event_handler(bc_button_t *self, bc_button_event_t event, void *even
 { 
     if (event == BC_BUTTON_EVENT_PRESS)
     {
-        playing = true;
-        startSeconds = bc_tick_get();
+        radio_delay = bc_tick_get() + RADIO_DELAY;
+        washing = true;
         bc_led_set_mode(&led, BC_LED_MODE_ON);
         bc_radio_pub_event_count(BC_RADIO_PUB_EVENT_PUSH_BUTTON, NULL);
     }
@@ -99,7 +89,6 @@ void application_init(void)
     bc_button_init(&button, BC_GPIO_BUTTON, BC_GPIO_PULL_DOWN, 0);
     bc_button_set_event_handler(&button, button_event_handler, NULL);
 
-
     // Initialize battery
     bc_module_battery_init();
     bc_module_battery_set_event_handler(battery_event_handler, NULL);
@@ -109,7 +98,7 @@ void application_init(void)
     bc_radio_init(BC_RADIO_MODE_NODE_SLEEPING);
 
     // Send radio pairing request
-    bc_radio_pairing_request("still-position-detector", VERSION);
+    bc_radio_pairing_request("washing-machine-detector", VERSION);
 
     bc_lis2dh12_init(&acc, BC_I2C_I2C0, 0x19);
     bc_lis2dh12_set_event_handler(&acc, lis2_event_handler, NULL);
@@ -117,9 +106,27 @@ void application_init(void)
     memset(&alarm, 0, sizeof(alarm));
 
     // Activate alarm when axis Z is above 0.25 or below -0.25 g
-    alarm.z_high = true;
-    alarm.threshold = 0.7;
+    alarm.x_high = true;
+    alarm.threshold = 0.3;
     alarm.duration = 0;
 
     bc_lis2dh12_set_alarm(&acc, &alarm);
+
+    bc_scheduler_plan_now(APPLICATION_TASK_ID);
+
+}
+
+
+        
+void application_task(void)
+{
+    if((bc_tick_get() >= radio_delay) && washing)
+    {
+        washing = false;
+        bc_led_set_mode(&led, BC_LED_MODE_OFF);
+        bc_log_debug("finished");
+        bc_radio_pub_bool("washing/finished", true);
+    }
+
+    bc_scheduler_plan_current_relative(1000);
 }
