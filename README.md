@@ -1,12 +1,17 @@
-<a href="https://www.bigclown.com/"><img src="https://bigclown.sirv.com/logo.png" width="200" alt="BigClown Logo" align="right"></a>
+<a href="https://www.hardwario.com/"><img src="https://www.hardwario.com/ci/assets/hw-logo.svg" width="200" alt="HARDWARIO Logo" align="right"></a>
 
-[![Twitter](https://img.shields.io/twitter/follow/BigClownLabs.svg?style=social&label=Follow)](https://twitter.com/BigClownLabs)
+# Monitor your washing machine activity
+
+[![Travis](https://img.shields.io/travis/bigclownprojects/bcf-radio-washing-machine-monitor/master.svg)](https://travis-ci.org/bigclownprojects/bcf-radio-washing-machine-monitor)
+[![Release](https://img.shields.io/github/release/bigclownprojects/bcf-radio-washing-machine-monitor.svg)](https://github.com/bigclownprojects/bcf-radio-washing-machine-monitor/releases)
+[![License](https://img.shields.io/github/license/bigclownprojects/bcf-radio-washing-machine-monitor.svg)](https://github.com/bigclownprojects/bcf-radio-washing-machine-monitor/blob/master/LICENSE)
+[![Twitter](https://img.shields.io/twitter/follow/hardwario_en.svg?style=social&label=Follow)](https://twitter.com/hardwario_en)
 
 This repository contains firmware Washing Machine Monitor for [Core Module](https://shop.bigclown.com/core-module).
 
 If you want to get more information about Core Module, firmware and how to work with it, please follow this link:
 
-**https://www.bigclown.com/doc/firmware/basic-overview/**
+**https://developers.hardwario.com/firmware/basic-overview/**
 
 User's application code (business logic) goes into `app/application.c`.
 
