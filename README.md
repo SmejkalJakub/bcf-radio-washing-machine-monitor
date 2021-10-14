@@ -2,7 +2,7 @@
 
 # Monitor your washing machine activity
 
-[![Travis](https://img.shields.io/travis/bigclownprojects/bcf-radio-washing-machine-monitor/master.svg)](https://travis-ci.org/bigclownprojects/bcf-radio-washing-machine-monitor)
+[![build](https://github.com/hardwario/twr-radio-washing-machine-monitor/actions/workflows/main.yml/badge.svg)](https://github.com/hardwario/twr-radio-washing-machine-monitor/actions/workflows/main.yml)
 [![Release](https://img.shields.io/github/release/bigclownprojects/bcf-radio-washing-machine-monitor.svg)](https://github.com/bigclownprojects/bcf-radio-washing-machine-monitor/releases)
 [![License](https://img.shields.io/github/license/bigclownprojects/bcf-radio-washing-machine-monitor.svg)](https://github.com/bigclownprojects/bcf-radio-washing-machine-monitor/blob/master/LICENSE)
 [![Twitter](https://img.shields.io/twitter/follow/hardwario_en.svg?style=social&label=Follow)](https://twitter.com/hardwario_en)
